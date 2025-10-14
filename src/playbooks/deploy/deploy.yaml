@@ -70,3 +70,54 @@
     - pulp
     - foreman
     - post_install
+
+  handlers:
+    - name: restart candlepin
+      ansible.builtin.systemd:
+        name: candlepin
+        state: restarted
+
+    - name: restart httpd
+      ansible.builtin.systemd:
+        name: httpd
+        state: restarted
+
+    - name: restart pulp-api
+      ansible.builtin.systemd:
+        name: pulp-api
+        state: restarted
+
+    - name: restart pulp-content
+      ansible.builtin.systemd:
+        name: pulp-content
+        state: restarted
+
+    - name: restart pulp-worker
+      ansible.builtin.systemd:
+        name: pulp-worker
+        state: restarted
+
+    - name: restart foreman
+      ansible.builtin.systemd:
+        name: foreman
+        state: restarted
+
+    - name: restart dynflow-sidekiq@orchestrator
+      ansible.builtin.systemd:
+        name: dynflow-sidekiq@orchestrator
+        state: restarted
+
+    - name: restart dynflow-sidekiq@worker
+      ansible.builtin.systemd:
+        name: dynflow-sidekiq@worker
+        state: restarted
+
+    - name: restart dynflow-sidekiq@worker-hosts-queue
+      ansible.builtin.systemd:
+        name: dynflow-sidekiq@worker-hosts-queue
+        state: restarted
+
+    - name: restart postgresql
+      ansible.builtin.systemd:
+        name: "{{ postgresql_container_name | default('postgresql') }}"
+        state: restarted
