@@ -33,6 +33,24 @@
     - Restart foreman
     - Restart dynflow-sidekiq@
 
+- name: Create secret for SEED_ORGANIZATION
+  containers.podman.podman_secret:
+    state: present
+    name: foreman-seed-organization
+    data: "{{ foreman_initial_organization }}"
+  notify:
+    - Restart foreman
+    - Restart dynflow-sidekiq@
+
+- name: Create secret for SEED_LOCATION
+  containers.podman.podman_secret:
+    state: present
+    name: foreman-seed-location
+    data: "{{ foreman_initial_location }}"
+  notify:
+    - Restart foreman
+    - Restart dynflow-sidekiq@
+
 - name: Create settings config secret
   containers.podman.podman_secret:
     state: present
@@ -109,6 +127,8 @@
       - 'foreman-database-url,type=env,target=DATABASE_URL'
       - 'foreman-seed-admin-user,type=env,target=SEED_ADMIN_USER'
       - 'foreman-seed-admin-password,type=env,target=SEED_ADMIN_PASSWORD'
+      - 'foreman-seed-organization,type=env,target=SEED_ORGANIZATION'
+      - 'foreman-seed-location,type=env,target=SEED_LOCATION'
       - 'foreman-settings-yaml,type=mount,target=/etc/foreman/settings.yaml'
       - 'foreman-katello-yaml,type=mount,target=/etc/foreman/plugins/katello.yaml'
       - 'foreman-ca-cert,type=mount,target=/etc/foreman/katello-default-ca.crt'
@@ -198,6 +218,8 @@
       - 'foreman-database-url,type=env,target=DATABASE_URL'
       - 'foreman-seed-admin-user,type=env,target=SEED_ADMIN_USER'
       - 'foreman-seed-admin-password,type=env,target=SEED_ADMIN_PASSWORD'
+      - 'foreman-seed-organization,type=env,target=SEED_ORGANIZATION'
+      - 'foreman-seed-location,type=env,target=SEED_LOCATION'
       - 'foreman-settings-yaml,type=mount,target=/etc/foreman/settings.yaml'
       - 'foreman-katello-yaml,type=mount,target=/etc/foreman/plugins/katello.yaml'
       - 'foreman-ca-cert,type=mount,target=/etc/foreman/katello-default-ca.crt'
@@ -246,6 +268,8 @@
       - 'foreman-database-url,type=env,target=DATABASE_URL'
       - 'foreman-seed-admin-user,type=env,target=SEED_ADMIN_USER'
       - 'foreman-seed-admin-password,type=env,target=SEED_ADMIN_PASSWORD'
+      - 'foreman-seed-organization,type=env,target=SEED_ORGANIZATION'
+      - 'foreman-seed-location,type=env,target=SEED_LOCATION'
       - 'foreman-settings-yaml,type=mount,target=/etc/foreman/settings.yaml'
       - 'foreman-db-ca,type=mount,target={{ foreman_database_ssl_ca_path }}'
 
