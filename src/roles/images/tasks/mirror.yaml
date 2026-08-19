@@ -1,0 +1,24 @@
+---
+# POC: redirect image pulls through a parent Foreman/Satellite server for
+# deployments (e.g. proxy/capsule) that cannot reach the upstream registries
+# directly. See docs/developer/deployment.md#image-management.
+- name: Configure registry mirror for proxy/capsule image pulls
+  when: images_registry_mirror_enabled
+  block:
+    - name: Determine unique upstream registry prefixes
+      ansible.builtin.set_fact:
+        images_mirror_prefixes: "{{ images_deployed_images
+          | map('regex_replace', '^([^/]+/[^/]+)/.*$', '\\1')
+          | unique | sort }}"
+
+    - name: Ensure registries.conf.d directory exists
+      ansible.builtin.file:
+        path: "{{ images_registry_mirror_conf_file | dirname }}"
+        state: directory
+        mode: "0755"
+
+    - name: Generate registry mirror configuration
+      ansible.builtin.template:
+        src: registries-mirror.conf.j2
+        dest: "{{ images_registry_mirror_conf_file }}"
+        mode: "0644"

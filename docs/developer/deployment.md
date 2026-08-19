@@ -223,6 +223,42 @@ When the private registry uses different image names or tags, use `.image.d` dro
 Image=katello.example.com/Default_Organization/foreman-rhel9:stream
 ```
 
+##### Proxy/capsule: mirroring through the parent server (POC)
+
+A proxy/capsule deployment typically has no direct route to the upstream
+registries and must pull images through its parent Foreman/Satellite server
+instead — the same "CDN → Satellite → Capsule" model already used for RPM
+content. Because a productized `.image.d/10-product.conf` drop-in (shipped
+in the RPM) already fixes the image name/tag identically for both the server
+and the proxy/capsule flavors, only the *location* needs to change on the
+proxy — which is exactly what `registries.conf.d` is for.
+
+`foremanctl deploy-proxy` generates this automatically: the `images` role
+tracks every image reference it deploys (`images_deployed_images`), derives
+the unique upstream `registry/namespace` prefixes from it, and renders
+`/etc/containers/registries.conf.d/50-foremanctl-mirror.conf` redirecting
+each prefix to the parent server passed via `--foreman-fqdn`:
+
+```toml
+# /etc/containers/registries.conf.d/50-foremanctl-mirror.conf (generated)
+[[registry]]
+prefix = "quay.io/foreman"
+location = "quadlet.example.com/Default_Organization"
+
+[[registry]]
+prefix = "quay.io/sclorg"
+location = "quadlet.example.com/Default_Organization"
+```
+
+This is currently a proof of concept: the `Default_Organization` path is a
+placeholder convention and needs to be finalized against whatever path the
+parent server actually publishes its mirrored container content under.
+Registry authentication for the mirror (`REGISTRY_AUTH_FILE`) is not yet
+wired up — see the auth-bundle mechanism as the likely delivery path for
+that credential.
+
+See `src/roles/images/tasks/mirror.yaml` and `src/roles/images/templates/registries-mirror.conf.j2`.
+
 ##### Developer testing a container build
 
 An `.image.d` drop-in overrides a single image without affecting others:

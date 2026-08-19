@@ -2,3 +2,13 @@
 images_quadlet_dir: /etc/containers/systemd
 images_registry_auth_file: /etc/foreman/registry-auth.json
 images_deployed_names: []
+images_deployed_images: []
+
+# When true, generate a registries.conf.d drop-in that redirects pulls for
+# every upstream registry prefix seen in images_deployed_images to
+# images_registry_mirror_location. Intended for proxy/capsule deployments
+# that cannot reach the upstream registries directly and must pull through
+# their parent Foreman/Satellite server instead. See docs/developer/deployment.md.
+images_registry_mirror_enabled: false
+images_registry_mirror_location: "{{ undef(hint='images_registry_mirror_location must be set when images_registry_mirror_enabled is true') }}"
+images_registry_mirror_conf_file: /etc/containers/registries.conf.d/50-foremanctl-mirror.conf

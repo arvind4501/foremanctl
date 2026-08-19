@@ -1,0 +1,13 @@
+# Managed by foremanctl.
+#
+# Redirects pulls for foremanctl's upstream image registries through the
+# parent Foreman/Satellite server ({{ images_registry_mirror_location }}),
+# since this host cannot reach the upstream registries directly. The image
+# is still pulled and stored under its original upstream name/tag; only the
+# physical source location changes. See containers-registries.conf(5).
+{% for prefix in images_mirror_prefixes %}
+[[registry]]
+prefix = "{{ prefix }}"
+location = "{{ images_registry_mirror_location }}"
+
+{% endfor %}
