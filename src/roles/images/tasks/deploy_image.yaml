@@ -21,3 +21,4 @@
 - name: Register deployed image name
   ansible.builtin.set_fact:
     images_deployed_names: "{{ images_deployed_names + [images_definition.name] }}"
+    images_deployed_images: "{{ images_deployed_images + [images_definition.image] }}"

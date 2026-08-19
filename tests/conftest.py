@@ -149,6 +149,13 @@ def default_certificates(certificate_source):
 
 
 @pytest.fixture(scope="module")
+def quadlet_fqdn():
+    # the parent Foreman server's fqdn, even when "server" points at a proxy/capsule
+    quadlet = get_paramiko_host('quadlet')
+    return quadlet.check_output('hostname -f')
+
+
+@pytest.fixture(scope="module")
 def quadlet_client_certificate():
     # this intentionally uses get_paramiko_host directly, as we want the cert of the quadlet box
     # not the one "server" points at, as that can be the proxy

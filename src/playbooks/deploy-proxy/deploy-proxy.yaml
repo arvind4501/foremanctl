@@ -40,3 +40,11 @@
         post_install_foreman_oauth_consumer_key: "{{ foreman_proxy_oauth_consumer_key }}"
         post_install_foreman_oauth_consumer_secret: "{{ foreman_proxy_oauth_consumer_secret }}"
         post_install_foreman_server_url: "{{ foreman_proxy_foreman_server_url }}"
+  post_tasks:
+    - name: Configure registry mirror for proxy/capsule image pulls
+      ansible.builtin.include_role:
+        name: images
+        tasks_from: mirror.yaml
+      vars:
+        images_registry_mirror_enabled: true
+        images_registry_mirror_location: "{{ foreman_proxy_foreman_server_url | regex_replace('^https?://', '') }}/Default_Organization"
